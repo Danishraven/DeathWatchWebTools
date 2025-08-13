@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html suppresshydrationwarning="true" data-lt-installed="true"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Encounter Generator</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                background-color: #f4f4f9;
+                color: #333;
+            }
+
+            h1, h2 {
+                color: #444;
+            }
+
+            form {
+                background-color: #fff;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                max-width: 400px;
+                margin-bottom: 20px;
+            }
+
+            label {
+                font-weight: bold;
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            input, select, button {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 15px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+
+            button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+            #enemyList {
+                background-color: #fff;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                max-width: 600px;
+            }
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            li {
+                background-color: #f9f9f9;
+                margin-bottom: 10px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            li button {
+                background-color: #dc3545;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+
+            li button:hover {
+                background-color: #c82333;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Encounter Generator</h1>
+        </header>
+
+        <main id="main">
+        <section id="formSection"><h2 id="formHeading">Create a Fighter</h2><div id="forms"><form id="fighterForm"><h1 id="formHeading">Create an Enemy</h1><label for="name">Name:</label><input type="text" id="name" name="name" required="true"><label for="toughnessBonus">Toughness Bonus:</label><input type="text" id="toughnessBonus" name="toughnessBonus" required="true"><label for="armourValue">Armour Value:</label><input type="text" id="armourValue" name="armourValue" required="true"><label for="averageDamage">Average Damage:</label><input type="text" id="averageDamage" name="averageDamage" required="true"><label for="penetration">Penetration:</label><input type="text" id="penetration" name="penetration" required="true"><label for="powerLevel">Power Level:</label><select id="powerLevel" name="powerLevel" required="true"><option value="" disabled="true" selected="selected">Select Power Level</option><option value="horde">Horde</option><option value="standard">Standard</option><option value="elite">Elite</option><option value="boss">Boss</option></select><button type="button">Generate Enemy</button></form></div><h2 id="formHeading">Create a Fighter</h2><div id="forms"><form id="fighterForm"><h1 id="formHeading">Create a Deathwatch Fighter</h1><label for="name">Name:</label><input type="text" id="name" name="name" required="true" value="test"><label for="toughnessBonus">Toughness Bonus:</label><input type="text" id="toughnessBonus" name="toughnessBonus" required="true"><label for="armourValue">Armour Value:</label><input type="text" id="armourValue" name="armourValue" required="true"><label for="averageDamage">Average Damage:</label><input type="text" id="averageDamage" name="averageDamage" required="true"><label for="penetration">Penetration:</label><input type="text" id="penetration" name="penetration" required="true"><label for="powerLevel">Power Level:</label><select id="powerLevel" name="powerLevel" required="true"><option value="" disabled="true" selected="selected">Select Power Level</option><option value="horde">Horde</option><option value="standard">Standard</option><option value="elite">Elite</option><option value="boss">Boss</option></select><button type="button">Generate Deathwatch Fighter</button></form></div></section><section id="displaySection"><div id="deathwatch fighterDisplayWrapper"><h2 id="deathwatch fighterDisplayHeading">Deathwatch  Fighter Display</h2><ul id="deathwatch fighterDisplay"></ul></div></section></main>
+
+        <footer>
+        </footer>
+
+        <script>
+            // ==========================
+            // Classes
+            // ==========================
+            class Fighter {
+                constructor(name, toughnessBonus, armourValue, averageDamage, penetration, powerLevel) {
+                    this.name = name;
+                    this.toughnessBonus = toughnessBonus;
+                    this.armourValue = armourValue;
+                    this.averageDamage = averageDamage;
+                    this.penetration = penetration;
+                    this.powerLevel = powerLevel;
+                }
+
+                displayStats() {
+                    return `Name: ${this.name}, Toughness Bonus: ${this.toughnessBonus}, Armour Value: ${this.armourValue}, Average Damage: ${this.averageDamage}, Penetration: ${this.penetration}, Power Level: ${this.powerLevel}`;
+                }
+            }
+
+            // ==========================
+            // Utility Functions
+            // ==========================
+
+            class UtilityHelper {
+                static createWrappedArray(arrayName, callback) {
+                    const array = (JSON.parse(localStorage.getItem(arrayName)) || []).map(fighterData => {
+                        return new Fighter(
+                            fighterData.name,
+                            fighterData.toughnessBonus,
+                            fighterData.armourValue,
+                            fighterData.averageDamage,
+                            fighterData.penetration,
+                            fighterData.powerLevel
+                        );
+                    });
+    
+                    function saveAndUpdate() {
+                        localStorage.setItem(arrayName, JSON.stringify(array));
+                        if (callback) callback();
+                    }
+    
+                    return {
+                        push(...items) {
+                            const result = array.push(...items);
+                            saveAndUpdate();
+                            return result;
+                        },
+                        splice(start, deleteCount, ...items) {
+                            const result = array.splice(start, deleteCount, ...items);
+                            saveAndUpdate();
+                            return result;
+                        },
+                        getArray() {
+                            return array;
+                        }
+                    };
+                }
+    
+                static addFighter(name, toughnessBonus, armourValue, averageDamage, penetration, level) {
+                    const newFighter = new Fighter(name, toughnessBonus, armourValue, averageDamage, penetration, level);
+                    console.log("Fighter generated:", newFighter);
+                    return newFighter;
+                }
+                
+                static capitalizeText(text) {
+                    return text.charAt(0).toUpperCase() + text.slice(1).replace(/([A-Z])/g, ' $1'); // Capitalize and format text
+                }
+    
+                static getArticle(word) {
+                    // Ensure the word is lowercase for comparison
+                    const lowerWord = word.toLowerCase();
+    
+                    // Check if the word starts with a vowel sound
+                    if (/^[aeiou]/.test(lowerWord)) {
+                        return "an";
+                    }
+    
+                    // Special cases for words starting with a silent "h" or vowel sounds
+                    if (/^hour|honest|heir|honor/.test(lowerWord)) {
+                        return "an";
+                    }
+    
+                    // Special cases for words starting with a "u" that sounds like "you"
+                    if (/^unicorn|university|unique/.test(lowerWord)) {
+                        return "a";
+                    }
+    
+                    // Default to "a" for all other cases
+                    return "a";
+                }
+            }
+
+            // ==========================
+            // Html Helper Class
+            // ==========================
+            class HtmlHelper {
+                // Add a form to a parent element
+                static addForm(parent, id) {
+                    const form = document.createElement("form");
+                    form.id = id;
+                    parent.appendChild(form);
+                    return form;
+                }
+
+                // Add a header to a parent element
+                static addHeader(parent, size, id, text) {
+                    const header = document.createElement(`h${size}`);
+                    header.id = id;
+                    header.textContent = text;
+                    parent.appendChild(header);
+                    return header;
+                }
+
+                // Add a label to a parent element
+                static addLabel(parent, forId, text) {
+                    const label = document.createElement("label");
+                    label.setAttribute("for", forId);
+                    label.textContent = text;
+                    parent.appendChild(label);
+                    return label;
+                }
+
+                // Add an input field to a parent element
+                static addInput(parent, type, id, name, required = false) {
+                    const input = document.createElement("input");
+                    input.setAttribute("type", type);
+                    input.setAttribute("id", id);
+                    input.setAttribute("name", name);
+                    if (required) {
+                        input.setAttribute("required", "true");
+                    }
+                    parent.appendChild(input);
+                    return input;
+                }
+
+                // Add a select dropdown to a parent element
+                static addSelect(parent, id, name, options, required = false, defaultOptionText = "Select an option", defaultOptionValue = "", defaultOptionDisabled = true, defaultOptionSelected = true) {
+                    const select = document.createElement("select");
+                    select.setAttribute("id", id);
+                    select.setAttribute("name", name);
+                    if (required) {
+                        select.setAttribute("required", "true");
+                    }
+
+                    // Add default option
+                    if (defaultOptionText) {
+                        const defaultOption = document.createElement("option");
+                        defaultOption.textContent = defaultOptionText;
+                        defaultOption.value = defaultOptionValue;
+                        if (defaultOptionDisabled) {
+                            defaultOption.setAttribute("disabled", "true");
+                        }
+                        if (defaultOptionSelected) {
+                            defaultOption.setAttribute("selected", "true");
+                        }
+                        select.appendChild(defaultOption);
+                    }
+
+                    // Add other options
+                    options.forEach(option => {
+                        const opt = document.createElement("option");
+                        opt.value = option;
+                        opt.textContent = option.charAt(0).toUpperCase() + option.slice(1); // Capitalize the first letter
+                        select.appendChild(opt);
+                    });
+
+                    parent.appendChild(select);
+                    return select;
+                }
+
+                // Add a button to a parent element
+                static addButton(parent, text, onClick) {
+                    const button = document.createElement("button");
+                    button.setAttribute("type", "button");
+                    button.textContent = text;
+                    button.onclick = onClick;
+                    parent.appendChild(button);
+                    return button;
+                }
+
+                // Add a section to a parent element
+                static addSection(parent, id) {
+                    const section = document.createElement("section");
+                    section.id = id;
+                    parent.appendChild(section);
+                    return section;
+                }
+
+                // Add a div to a parent element
+                static addDiv(parent, id) {
+                    const div = document.createElement("div");
+                    div.id = id;
+                    parent.appendChild(div);
+                    return div;
+                }
+
+                static addList(parent, id, items = []) {
+                    const ul = document.createElement("ul");
+                    ul.id = id;
+                    items.forEach((item, index) => {
+                        const li = document.createElement("li");
+                        li.id = `${id}-${index}`; // Unique ID for each list item
+                        li.textContent = item;
+                        ul.appendChild(li);
+                    });
+                    parent.appendChild(ul);
+                    return ul;
+                }
+            }
+
+            // ==========================
+            // Constants and Global Setup
+            // ==========================
+
+            const powerLevel = ["horde", "standard", "elite", "boss"];
+
+            // Create wrapped arrays for enemies and Deathwatch fighters
+            const enemyArray = UtilityHelper.createWrappedArray("enemyArray");
+            const deathWatchArray = UtilityHelper.createWrappedArray("deathWatchArray");
+
+            
+
+            
+
+            // ==========================
+            // Html Population
+            // ==========================
+            function populateMain(){
+                const main = document.getElementById("main");
+
+                // Create a wrapper for the form section
+                const formWrapper = HtmlHelper.addSection(main, "formSection");
+
+                const displayWrapper = HtmlHelper.addSection(main, "displaySection");
+
+            }
+
+            function populateForm(wrapper, fighterType) {
+                const formSection = document.getElementById("formSection");
+
+                // Create a heading for the form section
+                const formHeader = HtmlHelper.addHeader(formSection, 2, "formHeading", "Create a Fighter");
+
+                // Create a div for the form section
+                const formWrapper = HtmlHelper.addDiv(formSection, "forms");
+
+                // Create a new form
+                const form = HtmlHelper.addForm(formWrapper, "fighterForm");
+
+                // Add a heading to indicate the type of fighter
+                HtmlHelper.addHeader(form, 1, "formHeading", `Create ${UtilityHelper.getArticle(fighterType)} ${fighterType}`);
+
+                // Dynamically create input fields for Fighter properties
+                const fighterInstance = new Fighter("", 0, 0, 0, 0, "");
+                Object.keys(fighterInstance).forEach(prop => {
+                    if (prop === "powerLevel") return; // Skip powerLevel for now
+
+                    HtmlHelper.addLabel(form, prop, UtilityHelper.capitalizeText(prop + ":")); // Create label for each property
+
+                    HtmlHelper.addInput(form, "text", prop, prop, true); // Create input field for each property
+                });
+
+                // Add the power level dropdown
+                HtmlHelper.addLabel(form, "powerLevel", "Power Level:");
+
+                // Create a select element for power level
+                HtmlHelper.addSelect(form, "powerLevel", "powerLevel", powerLevel, true, "Select Power Level", "", true, true);
+
+                buttonText = `Generate ${fighterType}`; // Set the button text based on the fighter type
+                
+                // Add the Generate Fighter button
+                HtmlHelper.addButton(form, buttonText, CoreHelper.generateFighter.bind(null, wrapper, fighterType, populateDisplay)); // Bind the generate function to the button
+
+                // Focus on the name field
+                document.getElementById("name").focus();
+            }
+
+            function populateDisplay(wrapper, fighterType){
+                const displaySection = document.getElementById("displaySection");
+
+                // Clear the display section
+                displaySection.innerHTML = ""; // Clear previous content
+
+                // Create a wrapper for the display section
+                const displayWrapper = HtmlHelper.addDiv(displaySection, `${fighterType.toLowerCase()}DisplayWrapper`);
+
+                // Create a heading for the display section
+                HtmlHelper.addHeader(displayWrapper, 2, `${fighterType.toLowerCase()}DisplayHeading`, `${UtilityHelper.capitalizeText(fighterType)} Display`);
+
+                // Create a list to display fighters
+                const fightersDisplay = HtmlHelper.addList(displayWrapper, `${fighterType.toLowerCase()}Display`, wrapper.getArray().map(fighter => fighter.displayStats()));
+
+                const wrapperArray = wrapper.getArray(); // Get the array of fighters from the wrapper
+                // Add delete buttons to each fighter in the display
+                wrapperArray.forEach((item, index) => {
+                    const id = `${fightersDisplay.id}-${index}`;
+                    const element = document.getElementById(id);
+                
+                    HtmlHelper.addButton(element, `Delete`, () => {
+                        CoreHelper.deleteFighter(index, wrapper, fighterType);
+                    });
+                });
+
+            }
+            // ==========================
+            // Core Functions
+            // ==========================
+
+            class CoreHelper{
+                static generateFighter(wrapper, fighterType, callback) {
+                    const name = document.getElementById("name").value;
+                    const toughnessBonus = parseInt(document.getElementById("toughnessBonus").value);
+                    const armourValue = parseInt(document.getElementById("armourValue").value);
+                    const averageDamage = parseInt(document.getElementById("averageDamage").value);
+                    const penetration = parseInt(document.getElementById("penetration").value);
+                    const powerLevel = document.getElementById("powerLevel").value;
+    
+                    const fighter = UtilityHelper.addFighter(name, toughnessBonus, armourValue, averageDamage, penetration, powerLevel);
+    
+                    wrapper.push(fighter); // Automatically saves and updates the UI
+
+                    callback(wrapper, fighterType); // Refresh the display section after generation
+                }
+    
+                static deleteFighter(index, wrapper, fighterType) {
+                    wrapper.splice(index, 1); // Automatically saves and updates the UI
+                    console.log(`Deleted ${fighterType} at index ${index}`);
+                    populateDisplay(wrapper, fighterType); // Refresh the display section after deletion
+                }
+            }
+
+            // ==========================
+            // Initialization
+            // ==========================
+            window.onload = function () {
+                populateMain(); // Populate the main section with forms and enemy list
+
+                populateForm(enemyArray, "Enemy"); // Populate the form with the first fighter's data if available
+                populateDisplay(enemyArray, "Enemy"); // Populate the display section with existing enemies
+
+                populateForm(deathWatchArray, "Deathwatch Fighter"); // Populate the form with Deathwatch fighters if needed
+                populateDisplay(deathWatchArray, "Deathwatch Fighter"); // Populate the display section with existing Deathwatch fighters
+            };
+        </script>
+    <!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+<div style="position: absolute !important; top: 0px !important; left: 0px !important; height: 0px !important; width: 0px !important;" data-lastpass-root=""></div></body></html>
